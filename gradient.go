@@ -31,6 +31,7 @@ func (s stops) Swap(i, j int) {
 type Gradient interface {
 	Pattern
 	AddColorStop(offset float64, color color.Color)
+	AddColorStopHex(offset float64, hexcolor string)
 }
 
 // Linear Gradient
@@ -140,6 +141,18 @@ func (g *radialGradient) ColorAt(x, y int) color.Color {
 
 func (g *radialGradient) AddColorStop(offset float64, color color.Color) {
 	g.stops = append(g.stops, stop{pos: offset, color: color})
+	sort.Sort(g.stops)
+}
+
+func (g *linearGradient) AddColorStopHex(offset float64, hexcolor string) {
+	r1, g1, b1, a1 := parseHexColor(hexcolor)
+	g.stops = append(g.stops, stop{pos: offset, color: color.RGBA{uint8(r1), uint8(g1), uint8(b1), uint8(a1)}})
+	sort.Sort(g.stops)
+}
+
+func (g *radialGradient) AddColorStopHex(offset float64, hexcolor string) {
+	r1, g1, b1, a1 := parseHexColor(hexcolor)
+	g.stops = append(g.stops, stop{pos: offset, color: color.RGBA{uint8(r1), uint8(g1), uint8(b1), uint8(a1)}})
 	sort.Sort(g.stops)
 }
 
